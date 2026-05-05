@@ -9,6 +9,7 @@ from modules.recon import Recon
 from modules.scanner import Scanner
 from modules.exploit import Exploit
 from modules.report import Report
+from modules.pivot import Pivot
 
 BANNER = """
 ╔═══════════════════════════════════════════════╗
@@ -183,6 +184,21 @@ def mode_full(args):
     report.generate_terminal_report(args.target)
     report.save_report()
 
+def mode_pivot(args):
+    """Pivot mode - lateral movement"""
+    if not args.target:
+        print("[-] Please provide target: --target <ip>")
+        return
+
+    exploit = Exploit()
+    if not exploit.check_authorization(args.target):
+        return
+
+    username = input("[*] Username: ")
+    password = input("[*] Password: ")
+
+    pivot = Pivot()
+    pivot.full_pivot(args.target, username, password)
 def main():
     print(BANNER)
 
@@ -192,7 +208,7 @@ def main():
 
     parser.add_argument(
         "--mode",
-        choices=["recon", "scan", "exploit", "full"],
+        choices=["recon", "scan", "exploit", "pivot", "full"],
         required=True,
         help="Operation mode"
     )
